@@ -105,10 +105,6 @@
             list.appendChild(div);
         }
 
-        window.addEventListener("load", () => {
-            loadTasks();
-        });
-
         function loadTasks() {
             let lastTasks = localStorage.getItem("tasks");
             if (!lastTasks) return;
