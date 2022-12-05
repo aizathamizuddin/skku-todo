@@ -38,7 +38,7 @@
                 <div id="todo-list">
                 </div>
             </div>
-            <div class="flex-grow-1 bg-light rounded-2 p-2 w-50">
+            <div class="flex-grow-1 bg-light rounded-2 p-2 me-2 w-50">
                 <h3>Done</h3>
                 <div id="done-list">
                 </div>
@@ -50,8 +50,6 @@
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
     <script>
-        let updateBtn = document.querySelector("#update");
-        console.log(updateBtn);
 
         const Type = {
             Todo: 1,
@@ -60,10 +58,6 @@
 
         let tasks = [];
         let doneTasks = [];
-
-        function saveTasks() {
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-        }
 
         function addToList(task) {
             let div = document.createElement("div");
@@ -74,111 +68,110 @@
             span.textContent = task.text;
             div.appendChild(span);
 
-            let buttonUp = document.createElement("button");
             
             if (task.type === Type.Todo) {
+                let buttonUp = document.createElement("button");
                 buttonUp.className = "btn btn-sm btn-primary me-1";
                 buttonUp.innerHTML = '<i class="bi bi-arrow-up"></i>';
                 div.appendChild(buttonUp);
 
+                let buttonDown = document.createElement("button");
+                buttonDown.className = "btn btn-sm btn-primary me-1";
+                buttonDown.innerHTML = '<i class="bi bi-arrow-down"></i>';
+                div.appendChild(buttonDown);
+
+                let buttonDone = document.createElement("button");
+                buttonDone.className = "btn btn-sm btn-success me-1";
+                buttonDone.innerHTML = '<i class = "bi bi-check"></i>';
+                div.appendChild(buttonDone);
+
+                let buttonRemove = document.createElement("button");
+                buttonRemove.className = "btn btn-sm btn-danger";
+                buttonRemove.innerHTML = '<i class = "bi bi-x"></i>';
+                div.appendChild(buttonRemove);
+
                 buttonUp.addEventListener("click", () => {
-                const currentText = task.text;
-                let currElement = 0;
-                for(let i = 0; i < tasks.length; i++){
-                    if(tasks[i].text === task.text){
-                        currElement = i;
-                        console.log(currElement);
-                        break;
-                    }
-                }
-                
-                if(currElement > 0){
-                    //console.log(currentText);
-                    const nextText = tasks[currElement-1].text;
-                    console.log("This is nextText" + nextText);
-                    const temp = tasks[currElement].text;
-
-                    for(const span of document.querySelectorAll("span")){
-                        if(span.textContent === currentText){
-                            tasks[currElement].text = nextText;
-                            span.textContent = nextText;
+                    const currentText = task.text;
+                    let currElement = 0;
+                    for(let i = 0; i < tasks.length; i++){
+                        if(tasks[i].text === task.text){
+                            currElement = i;
+                            console.log(currElement);
                             break;
                         }
                     }
                     
-                    for(const span of document.querySelectorAll("span")){
-                        if(span.textContent === nextText){
-                            tasks[currElement-1].text = temp;
-                            span.textContent = temp;
-                            //console.log("Next");
+                    if(currElement > 0){
+                        //console.log(currentText);
+                        const nextText = tasks[currElement-1].text;
+                        console.log("This is nextText" + nextText);
+                        const temp = tasks[currElement].text;
+
+                        for(const span of document.querySelectorAll("span")){
+                            if(span.textContent === currentText){
+                                tasks[currElement].text = nextText;
+                                span.textContent = nextText;
+                                break;
+                            }
+                        }
+                        
+                        for(const span of document.querySelectorAll("span")){
+                            if(span.textContent === nextText){
+                                tasks[currElement-1].text = temp;
+                                span.textContent = temp;
+                                //console.log("Next");
+                                break;
+                            }
+                        }
+                        //saveTasks();
+                    }
+                });
+
+                buttonDown.addEventListener("click", () => {
+                    const currentText = task.text;
+                    let currElement = 0;
+                    for(let i = 0; i < tasks.length; i++){
+                        if(tasks[i].text === task.text){
+                            currElement = i;
+                            console.log(currElement);
                             break;
                         }
                     }
-                    //saveTasks();
-                }
-            });
-            }
-
-            let buttonDown = document.createElement("button");
-            buttonDown.className = "btn btn-sm btn-primary me-1";
-            buttonDown.innerHTML = '<i class="bi bi-arrow-down"></i>';
-            div.appendChild(buttonDown);
-
-            let buttonDone = document.createElement("button");
-            buttonDone.className = "btn btn-sm btn-success me-1";
-            buttonDone.innerHTML = '<i class = "bi bi-check"></i>';
-            div.appendChild(buttonDone);
-
-            let buttonRemove = document.createElement("button");
-            buttonRemove.className = "btn btn-sm btn-danger";
-            buttonRemove.innerHTML = '<i class = "bi bi-x"></i>';
-            div.appendChild(buttonRemove);
-
-            buttonDown.addEventListener("click", () => {
-                const currentText = task.text;
-                let currElement = 0;
-                for(let i = 0; i < tasks.length; i++){
-                    if(tasks[i].text === task.text){
-                        currElement = i;
-                        console.log(currElement);
-                        break;
-                    }
-                }
-                
-                if(currElement < tasks.length){
-                    //console.log(currentText);
-                    const nextText = tasks[currElement+1].text;
-                    console.log("This is nextText" + nextText);
-                    const temp = tasks[currElement].text;
                     
-                    for(const span of document.querySelectorAll("span")){
-                        if(span.textContent === nextText){
-                            tasks[currElement+1].text = temp;
-                            span.textContent = temp;
-                            //console.log("Next");
-                            break;
+                    if(currElement < tasks.length){
+                        //console.log(currentText);
+                        const nextText = tasks[currElement+1].text;
+                        console.log("This is nextText" + nextText);
+                        const temp = tasks[currElement].text;
+                        
+                        for(const span of document.querySelectorAll("span")){
+                            if(span.textContent === nextText){
+                                tasks[currElement+1].text = temp;
+                                span.textContent = temp;
+                                //console.log("Next");
+                                break;
+                            }
                         }
-                    }
 
-                    for(const span of document.querySelectorAll("span")){
-                        if(span.textContent === currentText){
-                            tasks[currElement].text = nextText;
-                            span.textContent = nextText;
-                            break;
+                        for(const span of document.querySelectorAll("span")){
+                            if(span.textContent === currentText){
+                                tasks[currElement].text = nextText;
+                                span.textContent = nextText;
+                                break;
+                            }
                         }
+                        //saveTasks();
                     }
-                    //saveTasks();
-                }
-            });
+                });
 
-            buttonRemove.addEventListener("click", () => {
-                div.remove();
-                console.log(task);
-                tasks = tasks.filter(t => t !== task);
-                saveTasks();
-            });
+                buttonRemove.addEventListener("click", () => {
+                    div.remove();
+                    console.log(task);
+                    tasks = tasks.filter(t => t !== task);
+                    saveTasks();
+                });
 
-            buttonDone.addEventListener("click", () => {
+                buttonDone.addEventListener("click", () => {
                 task.type = "#done-list";
                 console.log(task.type);
 
@@ -190,21 +183,35 @@
                 list.appendChild(div);
                 saveTasks();
             });
+            }
 
             let list = document.querySelector(task.type === Type.Todo ? "#todo-list" : "#done-list");
             list.appendChild(div);
         }
 
+
+        function saveTasks() {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            localStorage.setItem("done", JSON.stringify(doneTasks));
+        }
+
         function loadTasks() {
             let lastTasks = localStorage.getItem("tasks");
             if (!lastTasks) return;
-
             tasks = JSON.parse(lastTasks);
             tasks.forEach(addToList);
         }
 
+        function loadDone() {
+            let lastDoneTasks = localStorage.getItem("done");
+            if (!lastDoneTasks) return;
+            doneTasks = JSON.parse(lastDoneTasks);
+            doneTasks.forEach(addToList);
+        }
+
         window.addEventListener("load", () => {
             loadTasks();
+            loadDone();
         });
 
         window.addEventListener("keyup", function(event) {
