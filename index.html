@@ -36,21 +36,11 @@
             <div class="flex-grow-1 bg-light rounded-2 p-2 me-2 w-50">
                 <h3>Todos</h3>
                 <div id="todo-list">
-                    <div class="task bg-light p-1 rounded-2 ps-2 d-flex align-items-center">
-                        <span class="me-auto">Task text</span>
-                        <button class="btn btn-sm btn-success me-1">
-                            <i class="bi bi-check"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
             <div class="flex-grow-1 bg-light rounded-2 p-2 w-50">
                 <h3>Done</h3>
                 <div id="done-list">
-
                 </div>
             </div>
         </div>
@@ -69,6 +59,7 @@
         };
 
         let tasks = [];
+        let doneTasks = [];
 
         function saveTasks() {
             localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -83,21 +74,120 @@
             span.textContent = task.text;
             div.appendChild(span);
 
+            let buttonUp = document.createElement("button");
+            
             if (task.type === Type.Todo) {
-                let buttonDone = document.createElement("button");
-                buttonDone.className = "btn btn-sm btn-success me-1";
-                buttonDone.innerHTML = '<i class = "bi bi-check"></i>';
-                div.appendChild(buttonDone);
+                buttonUp.className = "btn btn-sm btn-primary me-1";
+                buttonUp.innerHTML = '<i class="bi bi-arrow-up"></i>';
+                div.appendChild(buttonUp);
+
+                buttonUp.addEventListener("click", () => {
+                const currentText = task.text;
+                let currElement = 0;
+                for(let i = 0; i < tasks.length; i++){
+                    if(tasks[i].text === task.text){
+                        currElement = i;
+                        console.log(currElement);
+                        break;
+                    }
+                }
+                
+                if(currElement > 0){
+                    //console.log(currentText);
+                    const nextText = tasks[currElement-1].text;
+                    console.log("This is nextText" + nextText);
+                    const temp = tasks[currElement].text;
+
+                    for(const span of document.querySelectorAll("span")){
+                        if(span.textContent === currentText){
+                            tasks[currElement].text = nextText;
+                            span.textContent = nextText;
+                            break;
+                        }
+                    }
+                    
+                    for(const span of document.querySelectorAll("span")){
+                        if(span.textContent === nextText){
+                            tasks[currElement-1].text = temp;
+                            span.textContent = temp;
+                            //console.log("Next");
+                            break;
+                        }
+                    }
+                    //saveTasks();
+                }
+            });
             }
+
+            let buttonDown = document.createElement("button");
+            buttonDown.className = "btn btn-sm btn-primary me-1";
+            buttonDown.innerHTML = '<i class="bi bi-arrow-down"></i>';
+            div.appendChild(buttonDown);
+
+            let buttonDone = document.createElement("button");
+            buttonDone.className = "btn btn-sm btn-success me-1";
+            buttonDone.innerHTML = '<i class = "bi bi-check"></i>';
+            div.appendChild(buttonDone);
 
             let buttonRemove = document.createElement("button");
             buttonRemove.className = "btn btn-sm btn-danger";
             buttonRemove.innerHTML = '<i class = "bi bi-x"></i>';
             div.appendChild(buttonRemove);
 
+            buttonDown.addEventListener("click", () => {
+                const currentText = task.text;
+                let currElement = 0;
+                for(let i = 0; i < tasks.length; i++){
+                    if(tasks[i].text === task.text){
+                        currElement = i;
+                        console.log(currElement);
+                        break;
+                    }
+                }
+                
+                if(currElement < tasks.length){
+                    //console.log(currentText);
+                    const nextText = tasks[currElement+1].text;
+                    console.log("This is nextText" + nextText);
+                    const temp = tasks[currElement].text;
+                    
+                    for(const span of document.querySelectorAll("span")){
+                        if(span.textContent === nextText){
+                            tasks[currElement+1].text = temp;
+                            span.textContent = temp;
+                            //console.log("Next");
+                            break;
+                        }
+                    }
+
+                    for(const span of document.querySelectorAll("span")){
+                        if(span.textContent === currentText){
+                            tasks[currElement].text = nextText;
+                            span.textContent = nextText;
+                            break;
+                        }
+                    }
+                    //saveTasks();
+                }
+            });
+
             buttonRemove.addEventListener("click", () => {
                 div.remove();
+                console.log(task);
                 tasks = tasks.filter(t => t !== task);
+                saveTasks();
+            });
+
+            buttonDone.addEventListener("click", () => {
+                task.type = "#done-list";
+                console.log(task.type);
+
+                let list = document.querySelector(task.type === Type.Todo ? "#todo-list" : "#done-list");
+                div.removeChild(buttonUp);
+                div.removeChild(buttonDown);
+                div.removeChild(buttonDone);
+                tasks = tasks.filter(t => t !== task);
+                list.appendChild(div);
                 saveTasks();
             });
 
@@ -117,9 +207,21 @@
             loadTasks();
         });
 
+        window.addEventListener("keyup", function(event) {
+            if (event.key === "Enter"){
+                event.preventDefault();
+                addTask();
+            }
+        })
+
         let button = document.querySelector("#add");
         button.addEventListener("click", () => {
-            //console.log('Clicked!');
+           addTask();
+           //tasks.forEach(element => console.log(element));
+        })
+
+        function addTask(){
+             //console.log('Clicked!');
             // 1. Read the text in #task-input.
             let input = document.querySelector("#task-input");
             let text = input.value;
@@ -133,38 +235,18 @@
                 type: Type.Todo
             };
 
-            //Adding a task
-            // 3. Create a new task item and attach it to #todo-list.
-            addToList(task);
-            // 4. Clear #task-input.
-            input.value = "";
-
-            /* (1st)
-            let newTask = document.createElement("div");
-            newTask.classList.add("task", "bg-light", "p-1", "rounded-2", "ps-2");
-            newTask.textContent = task;
-
-            let todoList = document.querySelector("#todo-list");
-            todoList.appendChild(newTask);
-
-            // 3. Clear #task-input.
-            input.value = "";
-            */
-
-            /* (2nd)
-            // 3. Create a new task item and attach it to #todo-list.
-            addToList(task);
-
-            // 4. Clear #task-input.
-            input.value = "";
-            */
-
             // 3. Append the new Task object to tasks
             tasks.push(task);
             saveTasks();
 
             console.log(task);
-        })
+
+            //Adding a task
+            // 4. Create a new task item and attach it to #todo-list.
+            addToList(task);
+            // 5. Clear #task-input.
+            input.value = "";
+        }
     </script>
 </body>
 
