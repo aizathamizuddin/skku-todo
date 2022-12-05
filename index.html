@@ -172,17 +172,36 @@
                 });
 
                 buttonDone.addEventListener("click", () => {
-                task.type = "#done-list";
-                console.log(task.type);
+                    task.type = Type.Done;
+                    
+                    doneTasks.push(task);
+                    console.log(doneTasks);
+                    saveDone();
 
-                let list = document.querySelector(task.type === Type.Todo ? "#todo-list" : "#done-list");
-                div.removeChild(buttonUp);
-                div.removeChild(buttonDown);
-                div.removeChild(buttonDone);
-                tasks = tasks.filter(t => t !== task);
-                list.appendChild(div);
-                saveTasks();
-            });
+                    div.removeChild(buttonUp);
+                    div.removeChild(buttonDown);
+                    div.removeChild(buttonDone);
+
+                    tasks = tasks.filter(t => t !== task);
+                    saveTasks();
+                    
+                    let list = document.querySelector(task.type === Type.Todo ? "#todo-list" : "#done-list");
+                    list.appendChild(div);
+                });
+            }
+
+            else if (task.type === Type.Done){
+                let buttonRemove = document.createElement("button");
+                buttonRemove.className = "btn btn-sm btn-danger";
+                buttonRemove.innerHTML = '<i class = "bi bi-x"></i>';
+                div.appendChild(buttonRemove);
+
+                buttonRemove.addEventListener("click", () => {
+                    div.remove();
+                    console.log(task);
+                    doneTasks = doneTasks.filter(t => t !== task);
+                    saveDone();
+                });
             }
 
             let list = document.querySelector(task.type === Type.Todo ? "#todo-list" : "#done-list");
@@ -192,6 +211,9 @@
 
         function saveTasks() {
             localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function saveDone(){
             localStorage.setItem("done", JSON.stringify(doneTasks));
         }
 
